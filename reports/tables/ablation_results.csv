@@ -1,0 +1,5 @@
+Configuration,Accuracy,F1_phishing,ROC_AUC,N_features
+Raw char n-grams,0.9961,0.9955,0.9984,50000
+Normalized char n-grams,0.9858,0.9832,0.9958,50000
+Normalized n-grams + features,0.9961,0.9954,0.9987,50012
+Engineered features only,0.9933,0.9921,0.996,12

@@ -1,0 +1,17 @@
+Final Model Selection Summary
+=============================
+Best model: Linear_SVM
+
+Label convention: benign=0, phishing=1 (phishing is the positive class).
+
+Normalization applied before TF-IDF:
+  - ensured a scheme exists, lowercased
+  - removed leading 'www.'
+  - dropped query strings and fragments
+  - collapsed repeated slashes, kept host + first two path segments
+  - replaced digit runs in the path with NUM
+
+Why this model:
+  - highest phishing F1 on the held-out test set
+  - char n-gram TF-IDF suits sparse, high-dimensional URL strings
+  - calibrated (Platt scaling, 5-fold) so the UI can show probabilities

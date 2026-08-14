@@ -1,0 +1,13 @@
+feature,weight
+num_slashes,11.5837
+num_digits,10.1375
+is_https,-6.7758
+num_hyphens,1.4158
+hostname_length,1.2588
+has_at,0.6611
+path_length,0.4864
+num_special,-0.2413
+has_ip,-0.2062
+num_subdomains,-0.1418
+url_length,0.0996
+num_dots,-0.0102

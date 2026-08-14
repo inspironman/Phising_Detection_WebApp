@@ -1,0 +1,10 @@
+url,normalized_url,predicted,phishing_probability
+https://www.google.com,https://google.com,Benign,0.09766743339470982
+https://github.com,https://github.com,Benign,0.13976844226114837
+https://www.amazon.com,https://amazon.com,Benign,0.47675600912963867
+https://netflix.com,https://netflix.com,Benign,0.45317023679494944
+https://2025.aulaweb.unige.it/enrol/index.php?id=1139,https://2025.aulaweb.unige.it/enrol/index.php,Phishing,0.979058940578122
+http://paypal-login-security-check.example.com,http://paypal-login-security-check.example.com,Phishing,0.9996744892729718
+http://192.168.1.2/verify/account/login.php,http://192.168.1.2/verify/account,Phishing,0.9999005620153221
+http://secure-update-bank-account.example.xyz/login,http://secure-update-bank-account.example.xyz/login,Phishing,0.9999904084584917
+http://att-103731-107123.weeblysite.com/,http://att-103731-107123.weeblysite.com,Phishing,0.9999924047204041

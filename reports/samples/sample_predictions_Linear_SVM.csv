@@ -1,0 +1,10 @@
+url,normalized_url,predicted
+https://www.google.com,https://google.com,Benign
+https://github.com,https://github.com,Benign
+https://www.amazon.com,https://amazon.com,Benign
+https://netflix.com,https://netflix.com,Phishing
+https://2025.aulaweb.unige.it/enrol/index.php?id=1139,https://2025.aulaweb.unige.it/enrol/index.php,Phishing
+http://paypal-login-security-check.example.com,http://paypal-login-security-check.example.com,Phishing
+http://192.168.1.2/verify/account/login.php,http://192.168.1.2/verify/account,Phishing
+http://secure-update-bank-account.example.xyz/login,http://secure-update-bank-account.example.xyz/login,Phishing
+http://att-103731-107123.weeblysite.com/,http://att-103731-107123.weeblysite.com,Phishing

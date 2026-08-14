@@ -1,0 +1,7 @@
+metric,value
+unique_domains_total,220086.0
+domains_in_train,176940.0
+domains_in_test,45286.0
+domains_in_both,2140.0
+test_rows_with_leaked_domain,3820.0
+pct_test_rows_leaked,0.081
