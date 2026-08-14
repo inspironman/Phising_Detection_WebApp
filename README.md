@@ -1,55 +1,129 @@
-# Phishing URL Detection
+# Phishing URL Detection with Machine Learning
 
-Lexical (character n-gram) phishing URL classifier with a model comparison,
-an ablation study, and a Streamlit demo. Machine Learning course project.
+Detect whether a URL is **phishing** or **legitimate** using only the text of the
+link — no page fetching, no external lookups. Three classifiers are trained and
+compared on ~235,000 URLs, followed by an **ablation study that shows the
+headline 99% accuracy is partly a dataset artifact** rather than real-world skill.
 
-## Layout
+> The interesting part of this project isn't the 99% accuracy — it's the analysis
+> proving *why* that number overstates real-world performance.
+
+---
+
+## Key results
+
+| Model | Accuracy | Phishing F1 | ROC-AUC |
+|-------|----------|-------------|---------|
+| **Linear SVM** (deployed) | 0.990 | **0.988** | 0.997 |
+| Logistic Regression | 0.986 | 0.983 | 0.996 |
+| Multinomial Naive Bayes | 0.963 | 0.956 | 0.992 |
+
+Evaluated on a held-out 20% test set (47,159 URLs). Phishing is the **positive
+class**, so precision/recall/F1 measure how well phishing is actually caught.
+
+---
+
+## The honest finding
+
+The scores look excellent — but an ablation revealed two things worth reporting:
+
+1. **URL normalization slightly *hurt* performance** — raw character n-grams
+   scored 0.996 F1 versus 0.983 for the normalized version.
+2. **12 trivial structural features (URL length, slash count, digit count…)
+   reach 0.992 F1 on their own** — nearly matching a 50,000-feature n-gram model.
+
+A dataset-bias diagnostic explains why: in this dataset, benign URLs are almost
+always bare domains (0% contain a path), while phishing URLs are longer and
+often carry paths. So the classifiers can largely separate the classes using
+trivial structure — a **dataset construction artifact**, not a robust signal.
+
+**Takeaway:** the reported accuracy would not fully hold on realistic data where
+legitimate URLs also contain paths and queries. This is documented as the primary
+threat to validity rather than hidden.
+
+---
+
+## Approach
+
 ```
-phishing_project/
-  data/phishing_simple.csv      # dataset (URL, Domain, label, length)
-  train_and_compare.py          # train + compare 3 models, save best
-  ablation.py                   # design-justification experiments
-  app.py                        # Streamlit demo
-  requirements.txt
-  reports/                      # tables + plots (created by the scripts)
-  models/                       # best_model.pkl (created by training)
+Raw URL → normalize → character n-grams (3–5) → TF-IDF → classifier → phishing / legitimate
 ```
 
-## Setup
+- **Features:** character n-grams (3–5 chars) weighted with TF-IDF. Character-level
+  features catch typosquatting and generalize to unseen domains.
+- **Models:** Logistic Regression, Linear SVM, Multinomial Naive Bayes — trained on
+  identical features for a fair comparison.
+- **Evaluation:** 80/20 stratified split, phishing as the positive class, plus a
+  domain-leakage check (only 8.1% of test URLs share a domain with training).
+- **Deployment:** the best model (calibrated Linear SVM) is served in an
+  interactive Streamlit app.
+
+---
+
+## Repository structure
+
+```
+.
+├── train_and_compare.py   # trains & compares the 3 models, saves the best
+├── ablation.py            # design-choice experiments (the honest finding)
+├── app.py                 # Streamlit demo — paste a URL, get a verdict
+├── requirements.txt
+├── data/                  # place phishing_simple.csv here
+├── models/                # best_model.pkl (generated)
+└── reports/               # metrics tables & plots (generated)
+```
+
+---
+
+## Quickstart
+
 ```bash
+# 1. install
 pip install -r requirements.txt
+
+# 2. put the dataset at data/phishing_simple.csv, then train
+python train_and_compare.py
+
+# 3. reproduce the ablation study
+python ablation.py
+
+# 4. launch the interactive demo
+streamlit run app.py
 ```
-The scripts look for the CSV at `data/phishing_simple.csv` (edit the
-`CANDIDATE_PATHS` list at the top of each script if yours lives elsewhere).
 
-## Run
-```bash
-python train_and_compare.py     # writes reports/ + models/best_model.pkl
-python ablation.py              # writes ablation tables + plot
-streamlit run app.py            # interactive demo (needs the model first)
-```
+Run all commands from the project root.
 
-## What each output is for (slide mapping)
-| File | Slide |
-|---|---|
-| `reports/tables/dataset_bias_diagnostic.csv` | Threats to validity |
-| `reports/tables/domain_leakage_check.csv`    | Evaluation setup |
-| `reports/tables/model_comparison.csv`        | Results |
-| `reports/plots/confusion_matrix_*.png`       | Results |
-| `reports/plots/roc_curves.png`               | Results |
-| `reports/tables/ablation_results.csv`        | Why these choices |
-| `reports/tables/engineered_feature_weights.csv` | Why these choices / the artifact |
-| `reports/plots/ablation_comparison.png`      | Why these choices |
+---
 
-## Key results (held-out 20% test set)
-- Best model: **Linear SVM** — accuracy 0.990, phishing F1 0.988, AUC 0.997.
-- Convention: **benign = 0, phishing = 1** (phishing is the positive class),
-  so precision/recall/F1 measure how well phishing is caught.
+## Dataset
 
-## Honest caveats (discuss these in the oral)
-- In this dataset benign URLs are almost all bare domains (mean 27 chars,
-  0% with a path) while phishing URLs are longer (mean 46 chars) and 27% carry
-  a path. 12 trivial structural features alone reach ~0.99 F1 — so the high
-  scores partly reflect a dataset construction artifact, not real-world skill.
-- Random split: ~8% of test URLs share a domain with training (modest
-  leakage). A domain-disjoint split would give a more conservative estimate.
+~235,795 labelled URLs (57% benign / 43% phishing) with columns `URL`, `Domain`,
+`label`, `length`. Sourced from Kaggle.
+*(Not included in this repo — download separately and place at `data/phishing_simple.csv`.)*
+
+---
+
+## Tech stack
+
+Python · scikit-learn · pandas · Streamlit · matplotlib / seaborn
+
+---
+
+## Possible improvements
+
+- Train on a benign corpus containing realistic path-bearing URLs (e.g. Common
+  Crawl samples) to remove the length/path artifact.
+- Use a **domain-disjoint** train/test split for a stricter generalization test.
+- Add richer features (domain age, TLS certificate info, host reputation).
+- Expect accuracy to *drop* on fairer data — that lower number would be the more
+  trustworthy one.
+
+---
+
+## License
+
+MIT 
+
+---
+
+*Built as a Master's-level ML course project (University of Genova).*
