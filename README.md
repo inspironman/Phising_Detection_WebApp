@@ -1,5 +1,7 @@
 # Phishing URL Detection with Machine Learning
 
+**🔗 [Live Demo](https://phisingdetectionwebapp-inspironman.streamlit.app/)** 
+
 Detect whether a URL is **phishing** or **legitimate** using only the text of the
 link — no page fetching, no external lookups. Three classifiers are trained and
 compared on ~235,000 URLs, followed by an **ablation study that shows the
